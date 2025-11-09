@@ -3,10 +3,12 @@ package domain
 import (
 	"errors"
 	"time"
+
+	"github.com/nac-39/kakeibo/pkg/entity"
 )
 
 const DEFAULT_ID = 0
-const DEFAULT_BALANCE = 0
+const DEFAULT_BALANCE = entity.Money(0)
 
 type FrequencyEnum int
 
