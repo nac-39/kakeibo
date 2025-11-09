@@ -43,21 +43,9 @@ func (f FrequencyEnum) String() (string, error) {
 	}
 }
 
-type Box interface {
-	Balance() int
-}
-
 type Duration struct {
 	StartDate time.Time
 	EndDate   time.Time
-}
-type WalletBox struct {
-	Id           int
-	Balance      int
-	Name         string
-	Frequency    FrequencyEnum
-	Duration     Duration
-	Availability AvailabilityEnum
 }
 
 func (d Duration) IsValid() bool {
@@ -70,9 +58,29 @@ func (d Duration) IsValid() bool {
 	return true
 }
 
-func NewWalletBox(name string, frequency FrequencyEnum, duration Duration, availability AvailabilityEnum) (*WalletBox, error) {
-	if name == "" {
-		return nil, errors.New("name cannot be empty")
+type BoxName string
+
+func (b BoxName) IsValid() bool {
+	if len(b) == 0 {
+		return false
+	}
+	return true
+}
+
+type Balance int
+
+type Box struct {
+	Id           int
+	Balance      Balance
+	Name         BoxName
+	Frequency    FrequencyEnum
+	Duration     Duration
+	Availability AvailabilityEnum
+}
+
+func NewWalletBox(name BoxName, frequency FrequencyEnum, duration Duration, availability AvailabilityEnum) (*Box, error) {
+	if !name.IsValid() {
+		return nil, errors.New("invalid name")
 	}
 	if !duration.IsValid() {
 		return nil, errors.New("invalid duration")
@@ -81,7 +89,7 @@ func NewWalletBox(name string, frequency FrequencyEnum, duration Duration, avail
 		return nil, errors.New("new wallet box must be active")
 	}
 
-	return &WalletBox{
+	return &Box{
 		Id:           DEFAULT_ID,
 		Balance:      DEFAULT_BALANCE,
 		Name:         name,

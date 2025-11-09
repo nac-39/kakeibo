@@ -8,7 +8,7 @@ import (
 func TestNewWalletBox(t *testing.T) {
 	t.Run("正常系", func(t *testing.T) {
 		want_duration := Duration{time.Now(), time.Now().Add(time.Hour)}
-		want := &WalletBox{
+		want := &Box{
 			Id:           DEFAULT_ID,
 			Balance:      DEFAULT_BALANCE,
 			Name:         "test01",
