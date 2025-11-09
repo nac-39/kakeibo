@@ -1,3 +1,3 @@
-module backend
+module kakeibo
 
 go 1.25.1
