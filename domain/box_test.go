@@ -2,17 +2,21 @@ package domain
 
 import (
 	"testing"
+	"time"
 )
 
 func TestNewWalletBox(t *testing.T) {
 	t.Run("正常系", func(t *testing.T) {
+		want_duration := Duration{time.Now(), time.Now().Add(time.Hour)}
 		want := &WalletBox{
-			id:        DEFAULT_ID,
-			balance:   DEFAULT_BALANCE,
-			name:      "test01",
-			frequency: FrequencyDaily,
+			Id:           DEFAULT_ID,
+			Balance:      DEFAULT_BALANCE,
+			Name:         "test01",
+			Frequency:    FrequencyDaily,
+			Duration:     want_duration,
+			Availability: Active,
 		}
-		got, err := NewWalletBox("test01", FrequencyDaily)
+		got, err := NewWalletBox("test01", FrequencyDaily, want_duration, Active)
 		if err != nil {
 			t.Errorf("NewWalletBox() error = %v", err)
 		}
@@ -22,7 +26,7 @@ func TestNewWalletBox(t *testing.T) {
 
 	})
 	t.Run("nameが空文字", func(t *testing.T) {
-		_, err := NewWalletBox("", FrequencyDaily)
+		_, err := NewWalletBox("", FrequencyDaily, Duration{}, Active)
 		if err == nil {
 			t.Errorf("NewWalletBox() error = %v", err)
 		}
