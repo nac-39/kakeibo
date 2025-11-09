@@ -69,18 +69,16 @@ func (b BoxName) IsValid() bool {
 	return true
 }
 
-type Balance int
-
 type Box struct {
 	Id           int
-	Balance      Balance
+	Balance      entity.Money
 	Name         BoxName
 	Frequency    FrequencyEnum
 	Duration     Duration
 	Availability AvailabilityEnum
 }
 
-func NewWalletBox(name BoxName, frequency FrequencyEnum, duration Duration, availability AvailabilityEnum) (*Box, error) {
+func NewBox(name BoxName, frequency FrequencyEnum, duration Duration, availability AvailabilityEnum) (*Box, error) {
 	if !name.IsValid() {
 		return nil, errors.New("invalid name")
 	}
