@@ -78,6 +78,34 @@ type Box struct {
 	Availability AvailabilityEnum
 }
 
+type IBox interface {
+	// 入金
+	Deposit(entity.Money) error
+	// 出金
+	Withdraw(entity.Money) error
+}
+
+// 入金
+func (b *Box) Deposit(amount entity.Money) error {
+	if amount.IsNegative() {
+		return errors.New("invalid amount")
+	}
+	b.Balance += amount
+	return nil
+}
+
+// 出金
+func (b *Box) Withdraw(amount entity.Money) error {
+	if amount > b.Balance {
+		return errors.New("insufficient balance")
+	}
+	if amount.IsNegative() {
+		return errors.New("invalid amount")
+	}
+	b.Balance -= amount
+	return nil
+}
+
 func NewBox(name BoxName, frequency FrequencyEnum, duration Duration, availability AvailabilityEnum) (*Box, error) {
 	if !name.IsValid() {
 		return nil, errors.New("invalid name")
