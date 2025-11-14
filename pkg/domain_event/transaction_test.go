@@ -42,14 +42,9 @@ func TestDepositEvent(t *testing.T) {
 		from.Deposit(entity.Money(0))
 		to.Deposit(entity.Money(0))
 
-		event, err := NewDepositEvent(from, to, entity.Money(50))
-		if err != nil {
-			t.Errorf("Failed to create deposit event: %v", err)
-		}
-
-		if event.CanApply() {
-			t.Errorf("DepositEvent should not be able to apply")
+		_, err = NewDepositEvent(from, to, entity.Money(50))
+		if err == nil {
+			t.Errorf("DepositEvent should not be able to apply: %v", err)
 		}
 	})
-
 }
