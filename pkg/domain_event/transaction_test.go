@@ -48,3 +48,84 @@ func TestDepositEvent(t *testing.T) {
 		}
 	})
 }
+
+func TestCreditEvent(t *testing.T) {
+	t.Run("引き落としが正常にできる", func(t *testing.T) {
+		from, err := domain.NewBox("From", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+		to, err := domain.NewBox("To", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+
+		from.Deposit(entity.Money(50))
+		to.Deposit(entity.Money(0))
+
+		_, err = NewCreditEvent(from, to, entity.Money(50))
+		if err != nil {
+			t.Errorf("Failed to create credit event: %v", err)
+		}
+	})
+
+	t.Run("引き落としが正常にできない", func(t *testing.T) {
+		from, err := domain.NewBox("From", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+		to, err := domain.NewBox("To", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+
+		from.Deposit(entity.Money(0))
+		to.Deposit(entity.Money(50))
+
+		_, err = NewCreditEvent(from, to, entity.Money(50))
+		if err == nil {
+			t.Errorf("CreditEvent should not be able to apply")
+		}
+	})
+}
+
+func TestTransferEvent(t *testing.T) {
+
+	t.Run("振込が正常にできる", func(t *testing.T) {
+		from, err := domain.NewBox("From", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+		to, err := domain.NewBox("To", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+
+		from.Deposit(entity.Money(50))
+		to.Deposit(entity.Money(0))
+
+		_, err = NewTransferEvent(from, to, entity.Money(50))
+		if err != nil {
+			t.Errorf("Failed to create transfer event: %v", err)
+		}
+	})
+
+	t.Run("振込に失敗する", func(t *testing.T) {
+		from, err := domain.NewBox("From", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+		to, err := domain.NewBox("To", domain.FrequencyNone, domain.Duration{StartDate: time.Now(), EndDate: time.Now().Add(time.Hour)}, domain.Active)
+		if err != nil {
+			t.Errorf("Failed to create box: %v", err)
+		}
+
+		from.Deposit(entity.Money(0))
+		to.Deposit(entity.Money(0))
+
+		_, err = NewTransferEvent(from, to, entity.Money(50))
+		if err == nil {
+			t.Errorf("TransferEvent should not be able to apply: %v", err)
+		}
+	})
+}
